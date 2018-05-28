@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var myinfo = require('./myinfo');
+var info = require('./info');
 
-router.use('/myinfo', myinfo);
+router.use('/info', info);
 
 
 
