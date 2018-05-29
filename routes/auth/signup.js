@@ -7,6 +7,29 @@ var UserData = require('../../config/user_dbconfig');
 
 router.post('/', function (req, res, next) {
     let taskArray = [
+        callback=>{
+            UserData.find({email : req.body.email}, (err, data)=>{
+                if(err){
+                    res.status(500).send({
+                        stat: "fail",
+                        msgs: "error"
+                    });
+                    callback(err);
+                }
+                else {
+                    if (data) {
+                        res.status(500).send({
+                            stat: "fail",
+                            msgs: "email already exist"
+                        });
+                        callback("email already exist");
+                    }
+                    else {
+                        callback(null);
+                    }
+                }
+            })
+        },
         (callback) => {
             let salt = crypto.randomBytes(32).toString('base64');
             crypto.pbkdf2(req.body.password, salt, 100000, 64, 'sha512', (err, hashed) => {
