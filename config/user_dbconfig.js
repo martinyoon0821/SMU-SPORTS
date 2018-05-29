@@ -1,5 +1,4 @@
-var mongoose = require('mongoose');
-var con = mongoose.connect('mongodb://13.125.61.58:27017/ssplus');
+let mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 var userDataSchema = new Schema({
     name: {

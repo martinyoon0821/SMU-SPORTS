@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var login = require('./login/index');
-var mypage = require('./mypage/index');
+var auth = require('./auth/index');
+var user = require('./user/index');
 
 
-router.use('/login', login);
-router.use('/mypage', mypage);
+
+router.use('/auth', auth);
+router.use('/user', user);
+
 
 
 module.exports = router;

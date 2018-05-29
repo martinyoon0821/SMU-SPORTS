@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
-var UserData = require('../../config/dbconfig');
+var UserData = require('../../config/user_dbconfig');
 var session = require('express-session');
 
 router.get('/', function (req, res, next) {
-    console.log(req.session.email + "!!!");
-    if(req.session.email){
+    console.log(req.session.nickname + "!!!");
+    if(req.session.nickname){
         req.session.destroy();
         if(req.session){
             res.status(500).send({
