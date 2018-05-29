@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 let async = require('async');
 var UserData = require('../../config/user_dbconfig');
-router.get('/', function (req, res, next) {
+router.put('/', function (req, res, next) {
     var taskArray = [
         (callback) =>{
             console.log(req.session.nickname);
@@ -25,21 +25,38 @@ router.get('/', function (req, res, next) {
                     });
                 }else{
                     if(data){
-                        res.status(200).send({
-                            stat:"success",
-                            msgs:"user find success",
-                            data : {
-                                name : data[0].name,
-                                email : data[0].email,
-                                nickname : data[0].nickname
-                            }
-                        })
+                       callback(null);
                     }else{
                         res.status(500).send({
                             stat: "fail",
                             msgs: "user find error"
                         });
                         callback("can't find user")
+                    }
+                }
+            })
+        },
+        callback =>{
+            UserData.update({nickname:req.session.nickname}, { $set: req.body}, (err, output)=>{
+                if(err) {
+                    res.status(500).send({
+                        stat: "fail",
+                        msgs: "can't update user error"
+                    });
+                    callback("can't update user error" + err);
+                }else{
+                    if(!output.n){
+                        res.status(500).send({
+                            stat:"fail",
+                            msgs: "can't find user error"
+                        });
+                        callback("can't find user error");
+                    }else {
+                        res.status(200).send({
+                            stat: "success",
+                            msgs: "update user success"
+                        });
+                        callback("update user success", null);
                     }
                 }
             })
