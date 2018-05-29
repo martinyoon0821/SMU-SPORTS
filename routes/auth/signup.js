@@ -17,7 +17,7 @@ router.post('/', function (req, res, next) {
                     callback(err);
                 }
                 else {
-                    if (data) {
+                    if (data.length != 0) {
                         res.status(500).send({
                             stat: "fail",
                             msgs: "email already exist"
