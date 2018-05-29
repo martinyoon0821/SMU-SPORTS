@@ -18,6 +18,12 @@
     "morgan": "~1.9.0",
     "package-lock.json": "^1.0.0",
     "serve-favicon": "~2.4.5",
-    "session": "^0.1.0"
+    "session": "^0.1.0",
+    "swagger": "^0.7.5",
+    "swagger-ui": "^3.16.0"
+  },
+  "devDependencies": {
+    "swagger-jsdoc": "^1.9.7",
+    "swagger-ui-express": "^3.0.9"
   }
 }
