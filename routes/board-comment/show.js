@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
+let BoardData = require('../../config/board_dbconfig')
 let CommentData = require('../../config/comment_dbconfig')
 
 router.get('/:board_id', function (req, res, next) {
@@ -16,8 +17,23 @@ router.get('/:board_id', function (req, res, next) {
                 });
             }
         },
-        (callback) => {
-            CommentData.find({board_id : req.params.board_id}, (err,data) =>{
+        callback=>{
+            BoardData.find({_id: req.params.board_id}, (err, board)=>{
+                if(err){
+                    res.status(500).send({
+                        stat:"fail",
+                        msgs: "board find error"
+                    });
+                    callback("board find error" + err);
+                }
+                else{
+
+                    callback(null, board);
+                }
+            })
+        },
+        (board, callback) => {
+            CommentData.find({board_id : req.params.board_id}, (err,comments) =>{
                 if(err){
                     res.status(500).send({
                         stat:"fail",
@@ -26,23 +42,27 @@ router.get('/:board_id', function (req, res, next) {
                     callback("find error" + err);
                 }
                 else{
-                    callback(null, data);
+                    console.log(comments)
+                    callback(null, board, comments);
                 }
             })
         },
-        (data, callback) => {
-            if(data){
+        (board, comments, callback) => {
+            if(board && comments){
                 res.status(200).send({
                     stat:"success",
-                    data: data
+                    data: {
+                        board: board,
+                        comments: comments
+                    }
                 });
-                callback("find boards success", null);
+                callback("find comments success", null);
             }else{
                 res.status(500).send({
                     stat:"fail",
-                    msgs:"can't find boards"
+                    msgs:"can't find comments"
                 });
-                callback("can't find boards");
+                callback("can't find comments");
             }
 
         }
