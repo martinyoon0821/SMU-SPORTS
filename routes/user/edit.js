@@ -11,7 +11,8 @@ router.put('/', function (req, res, next) {
 
     var taskArray = [
         (callback) => {
-            UserData.find({nickname : req.session.nickname}, (err,data)=>{
+            let email = req.decoded.email
+            UserData.find({email : email}, (err,data)=>{
                 if(err){
                     res.status(500).send({
                         stat: "fail",
@@ -32,7 +33,8 @@ router.put('/', function (req, res, next) {
             })
         },
         (callback) =>{
-            UserData.update({nickname:req.session.nickname}, { $set: req.body}, (err, output)=>{
+            let email = req.decoded.email
+            UserData.update({email:email}, { $set: req.body}, (err, output)=>{
                 if(err) {
                     res.status(500).send({
                         stat: "fail",
@@ -47,7 +49,7 @@ router.put('/', function (req, res, next) {
                         });
                         callback("can't find user error");
                     }else {
-                        if(req.session.nickname == req.body.nickname) {
+                        if(email == req.body.nickname) {
                             res.status(200).send({
                                 stat: "success",
                                 msgs: "update user success"
@@ -60,8 +62,25 @@ router.put('/', function (req, res, next) {
                 }
             })
         },
-        (callback) =>{
-            BoardData.find({author: req.session.nickname}, (err, data) =>{
+        (callback)=>{
+            let email = req.decoded.email;
+            UserData.find({email : email}, (err, data)=>{
+                if(err) {
+                    res.status(500).send({
+                        stat: "fail",
+                        msgs: "can't find user"
+                    });
+                    callback("can't find user" + err);
+                }
+                else{
+                    if(data){
+                        callback(null, findData);
+                    }
+                }
+            })
+        },
+        (findData, callback) =>{
+            BoardData.find({author: findData[0].nickname}, (err, data) =>{
                 if(err){
                     res.status(500).send({
                         stat: "fail",
@@ -90,8 +109,25 @@ router.put('/', function (req, res, next) {
                 }
             });
         },
-        (callback) =>{
-            CommentData.find({author: req.session.nickname}, (err, data) => {
+        (callback)=>{
+            let email = req.decoded.email;
+            UserData.find({email : email}, (err, data)=>{
+                if(err) {
+                    res.status(500).send({
+                        stat: "fail",
+                        msgs: "can't find user"
+                    });
+                    callback("can't find user" + err);
+                }
+                else{
+                    if(data){
+                        callback(null, findData);
+                    }
+                }
+            })
+        },
+        (findData, callback) =>{
+            CommentData.find({author: findData[0].nickname}, (err, data) => {
                 if(err){
                     res.status(500).send({
                         stat: "fail",
@@ -120,9 +156,6 @@ router.put('/', function (req, res, next) {
             })
         },
         (callback) => {
-            req.session.nickname = req.body.nickname;
-            console.log(req.session.nickname);
-            req.session.save();
             res.status(200).send({
                 stat: "success",
                 msgs: "update user success"
