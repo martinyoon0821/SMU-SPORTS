@@ -51,7 +51,8 @@ router.post('/', function (req, res, next) { //1
                     algorithm : 'HS256'
                 };
                 let payload = {
-                    email : req.body.email
+                    email : req.body.email,
+                    nickname : data[0].nickname
                 }
                 let token = jwt.sign(payload, secret, {expiresIn: '7d', algorithm:'HS256'});
                 res.status(201).send({

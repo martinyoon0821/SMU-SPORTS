@@ -62,7 +62,13 @@ router.put('/:_id', function (req, res, next) {
                                 res.status(200).send({
                                     stat: "success",
                                     msgs: "update board success",
-                                    data: data
+                                    data: {
+                                        _id : data._id,
+                                        author : data.author,
+                                        title : data.title,
+                                        content : req.body.content,
+                                        writetime: data.writetime
+                                    }
                                 });
                                 callback("update board success", null);
                             }

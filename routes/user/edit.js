@@ -8,10 +8,10 @@ let authMiddleware = require('../middleware/auth');
 
 router.use('/', authMiddleware);
 router.put('/', function (req, res, next) {
-
+    let email = req.decoded.email
+    let nickname = req.decoded.nickname
     var taskArray = [
         (callback) => {
-            let email = req.decoded.email
             UserData.find({email : email}, (err,data)=>{
                 if(err){
                     res.status(500).send({
@@ -33,7 +33,6 @@ router.put('/', function (req, res, next) {
             })
         },
         (callback) =>{
-            let email = req.decoded.email
             UserData.update({email:email}, { $set: req.body}, (err, output)=>{
                 if(err) {
                     res.status(500).send({
@@ -49,7 +48,7 @@ router.put('/', function (req, res, next) {
                         });
                         callback("can't find user error");
                     }else {
-                        if(email == req.body.nickname) {
+                        if(req.body.nickname == nickname) {
                             res.status(200).send({
                                 stat: "success",
                                 msgs: "update user success"
@@ -62,25 +61,8 @@ router.put('/', function (req, res, next) {
                 }
             })
         },
-        (callback)=>{
-            let email = req.decoded.email;
-            UserData.find({email : email}, (err, data)=>{
-                if(err) {
-                    res.status(500).send({
-                        stat: "fail",
-                        msgs: "can't find user"
-                    });
-                    callback("can't find user" + err);
-                }
-                else{
-                    if(data){
-                        callback(null, findData);
-                    }
-                }
-            })
-        },
-        (findData, callback) =>{
-            BoardData.find({author: findData[0].nickname}, (err, data) =>{
+        (callback) =>{
+            BoardData.find({author: nickname}, (err, data) =>{
                 if(err){
                     res.status(500).send({
                         stat: "fail",
@@ -109,25 +91,8 @@ router.put('/', function (req, res, next) {
                 }
             });
         },
-        (callback)=>{
-            let email = req.decoded.email;
-            UserData.find({email : email}, (err, data)=>{
-                if(err) {
-                    res.status(500).send({
-                        stat: "fail",
-                        msgs: "can't find user"
-                    });
-                    callback("can't find user" + err);
-                }
-                else{
-                    if(data){
-                        callback(null, findData);
-                    }
-                }
-            })
-        },
-        (findData, callback) =>{
-            CommentData.find({author: findData[0].nickname}, (err, data) => {
+        (callback) =>{
+            CommentData.find({author: nickname}, (err, data) => {
                 if(err){
                     res.status(500).send({
                         stat: "fail",
