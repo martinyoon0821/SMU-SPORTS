@@ -4,21 +4,12 @@ let async = require('async');
 var UserData = require('../../config/user_dbconfig');
 let BoardData = require('../../config/board_dbconfig');
 let CommentData = require('../../config/comment_dbconfig');
+let authMiddleware = require('../middleware/auth');
+
+router.use('/', authMiddleware);
 router.put('/', function (req, res, next) {
 
     var taskArray = [
-        (callback) =>{
-            console.log(req.session.nickname);
-            if(req.session.nickname){
-                callback(null);
-            }else{
-                callback("no session");
-                res.status(500).send({
-                    stat : "fail",
-                    msgs : "no session"
-                });
-            }
-        },
         (callback) => {
             UserData.find({nickname : req.session.nickname}, (err,data)=>{
                 if(err){

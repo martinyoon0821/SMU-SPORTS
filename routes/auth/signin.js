@@ -3,6 +3,7 @@ var router = express.Router();
 var crypto = require('crypto');
 var UserData = require('../../config/user_dbconfig');
 var async = require('async');
+let jwt = require('jsonwebtoken')
 router.post('/', function (req, res, next) { //1
     let taskArray =[
         (callback)=>{
@@ -44,13 +45,19 @@ router.post('/', function (req, res, next) { //1
         },
         (hashed, data, callback)=>{
             if(hashed.toString('base64') == data[0].password){
-                req.session.nickname = data[0].nickname;
-                console.log(req.session.nickname);
-                req.session.save();
-                //logout session ㅍㅏ기
+                let secret = req.app.get('jwt-secret');
+                let option = {
+                    expiresIn: '7d',
+                    algorithm : 'HS256'
+                };
+                let payload = {
+                    email : req.body.email
+                }
+                let token = jwt.sign(payload, secret, {expiresIn: '7d', algorithm:'HS256'});
                 res.status(201).send({
                     stat: "success",
-                    msgs: "login success"
+                    msgs: "login success",
+                    token: token
                 });
                 callback("login success", null);
             }

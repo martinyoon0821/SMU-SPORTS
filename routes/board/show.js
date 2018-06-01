@@ -2,20 +2,11 @@ var express = require('express');
 var router = express.Router();
 var async = require('async');
 let BoardData = require('../../config/board_dbconfig')
+let authMiddleware = require('../middleware/auth');
 
+router.use('/', authMiddleware);
 router.get('/', function (req, res, next) {
     let taskArray = [
-        (callback) => {
-            console.log(req.session.nickname);
-            if(req.session.nickname){
-                callback(null);
-            }else {
-                callback("No session");
-                res.status(500).send({
-                    stat: "fail"
-                });
-            }
-        },
         (callback) => {
             BoardData.find({}, (err,data) =>{
                 if(err){

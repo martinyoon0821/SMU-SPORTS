@@ -6,10 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var app = express();
-
+const config = require('./config/secret');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.set('jwt-secret', config.secret);
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://13.125.61.58:27017/ssplus');

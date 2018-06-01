@@ -3,22 +3,13 @@ var router = express.Router();
 var async = require('async');
 let moment = require('moment');
 let CommentData = require('../../config/comment_dbconfig')
+let authMiddleware = require('../middleware/auth');
 
+router.use('/', authMiddleware);
 router.put('/:_id', function (req, res, next) {
     let now = moment();
     let writetime = now.format('YYYY-MM-DD HH:mm:ss');
     let taskArray = [
-        (callback) => {
-            console.log(req.session.nickname);
-            if(req.session.nickname){
-                callback(null);
-            }else {
-                callback("No session");
-                res.status(500).send({
-                    stat: "fail"
-                });
-            }
-        },
         callback=>{
             CommentData.findOne({_id:req.params._id}, (err, data) =>{
                 if(err){
