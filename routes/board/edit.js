@@ -3,22 +3,13 @@ var router = express.Router();
 var async = require('async');
 let moment = require('moment');
 let BoardData = require('../../config/board_dbconfig')
+let authMiddleware = require('../middleware/auth');
 
+router.use('/', authMiddleware);
 router.put('/:_id', function (req, res, next) {
     let now = moment();
     let writetime = now.format('YYYY-MM-DD HH:mm:ss');
     let taskArray = [
-        (callback) => {
-            console.log(req.session.nickname);
-            if(req.session.nickname){
-                callback(null);
-            }else {
-                callback("No session");
-                res.status(500).send({
-                    stat: "fail"
-                });
-            }
-        },
         callback=>{
             BoardData.findOne({_id:req.params._id}, (err, data) =>{
                 if(err){
@@ -71,7 +62,13 @@ router.put('/:_id', function (req, res, next) {
                                 res.status(200).send({
                                     stat: "success",
                                     msgs: "update board success",
-                                    data: data
+                                    data: {
+                                        _id : data._id,
+                                        author : data.author,
+                                        title : data.title,
+                                        content : req.body.content,
+                                        writetime: data.writetime
+                                    }
                                 });
                                 callback("update board success", null);
                             }

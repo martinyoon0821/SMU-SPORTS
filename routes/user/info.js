@@ -2,22 +2,14 @@ var express = require('express');
 var router = express.Router();
 let async = require('async');
 var UserData = require('../../config/user_dbconfig');
+let authMiddleware = require('../middleware/auth');
+
+router.use('/', authMiddleware);
 router.get('/', function (req, res, next) {
     var taskArray = [
-        (callback) =>{
-            console.log(req.session.nickname);
-            if(req.session.nickname){
-                callback(null);
-            }else{
-                callback("no session");
-                res.status(500).send({
-                    stat : "fail",
-                    msgs : "no session"
-                });
-            }
-        },
         (callback) => {
-            UserData.find({nickname : req.session.nickname}, (err,data)=>{
+            let email = req.decoded.email
+            UserData.find({email : email}, (err,data)=>{
                 if(err){
                     res.status(500).send({
                         stat: "fail",
